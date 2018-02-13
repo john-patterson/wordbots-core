@@ -24,6 +24,7 @@ import EventAnimation from '../components/game/EventAnimation';
 import VictoryScreen from '../components/game/VictoryScreen';
 import TutorialTooltip from '../components/game/TutorialTooltip';
 import Chat from '../components/multiplayer/Chat';
+import CardSelector from '../components/game/CardSelector';
 import * as gameActions from '../actions/game';
 import * as socketActions from '../actions/socket';
 import { arbitraryPlayerState } from '../store/defaultGameState';
@@ -391,9 +392,11 @@ export class GameArea extends Component {
     return (
       <div
         className="gameArea"
-        style={
-          screenfull.isFullscreen ? {width: '100%', height: '100%'} : {}
-        }
+        style={{
+          width: screenfull.isFullscreen ? '100%' : 'auto', 
+          height: screenfull.isFullscreen ? this.state.areaHeight + 64 : this.state.areaHeight,
+          display: this.props.isSandbox ? 'flex' : 'block'
+        }}
       >
         <div>
           {this.renderNotification()}
@@ -405,6 +408,7 @@ export class GameArea extends Component {
           style={{
             position: 'relative',
             marginRight: this.props.isSandbox ? 0 : (this.state.chatOpen ? 256 : 64),
+            width: this.props.isSandbox ? 'calc(100% - 256px)' : 'auto',
             height: screenfull.isFullscreen ? this.state.areaHeight + 64 : this.state.areaHeight,
             background: `url(${this.loadBackground()})`
           }}
@@ -518,14 +522,18 @@ export class GameArea extends Component {
             onClick={this.handleClickEndGame} />
         </Paper>
 
-        {!this.props.isSandbox && <Chat
-          inGame
-          fullscreen={screenfull.isFullscreen}
-          open={this.state.chatOpen}
-          toggleChat={this.toggleChat}
-          roomName={this.props.socket.hosting ? null : this.props.socket.gameName}
-          messages={this.props.socket.chatMessages.concat(this.props.actionLog)}
-          onSendMessage={this.props.onSendChatMessage} />}
+        {
+          this.props.isSandbox ?
+          <CardSelector /> :
+          <Chat
+            inGame
+            fullscreen={screenfull.isFullscreen}
+            open={this.state.chatOpen}
+            toggleChat={this.toggleChat}
+            roomName={this.props.socket.hosting ? null : this.props.socket.gameName}
+            messages={this.props.socket.chatMessages.concat(this.props.actionLog)}
+            onSendMessage={this.props.onSendChatMessage} />
+        }
       </div>
     );
   }

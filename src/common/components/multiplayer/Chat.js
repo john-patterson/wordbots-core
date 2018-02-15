@@ -136,6 +136,7 @@ export default class Chat extends Component {
     }
   }
 
+  // TODO: It feels like ClosedChat and OpenChat should be different components?
   renderClosedChat() {
     return (
       <div>
